@@ -1,6 +1,11 @@
 import Link from "next/link"; // Note the import statement change
+import { auth } from "@/app/_lib/auth";
 
-export default function Navigation() {
+export default async function Navigation() {
+  // auth comes from auth file from which we get the info if user is logged in or not
+  const session = await auth(); // this will give me the session detials
+  console.log(session);
+
   return (
     <nav className="z-10 text-xl">
       <ul className="flex gap-16">
@@ -21,12 +26,27 @@ export default function Navigation() {
           </Link>
         </li>
         <li>
-          <Link
-            href="/account"
-            className="hover:text-accent-400 transition-colors"
-          >
-            Guest area
-          </Link>
+          {session?.user?.image ? (
+            <Link
+              href="/account"
+              className="hover:text-accent-400 flex gap-4 items-center transition-colors"
+            >
+              <img
+                className="h-8 rounded-full"
+                src={session.user.image}
+                alt={session.user.name}
+                referrerPolicy="no-referrer"
+              />
+              <span>Guest area</span>
+            </Link>
+          ) : (
+            <Link
+              href="/account"
+              className="hover:text-accent-400 transition-colors"
+            >
+              Guest area
+            </Link>
+          )}
         </li>
       </ul>
     </nav>
